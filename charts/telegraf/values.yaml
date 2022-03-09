@@ -33,14 +33,14 @@ env:
 # An older "volumeMounts" key was previously added which will likely
 # NOT WORK as you expect. Please use this newer configuration.
 
-# volumes:
-# - name: telegraf-output-influxdb2
-#   configMap:
-#     name: "telegraf-output-influxdb2"
-# mountPoints:
-# - name: telegraf-output-influxdb2
-#   mountPath: /etc/telegraf/conf.d
-#   subPath: influxdb2.conf
+ volumes:
+ - name: telegraf-outputs
+   configMap:
+     name: "telegraf-outputs"
+ mountPoints:
+ - name: telegraf-outputs
+   mountPath: /etc/telegraf/conf.d/outputs.yaml
+   subPath: conf.d/outputs.yaml
 
 
 ## Configure resource requests and limits
@@ -127,54 +127,12 @@ serviceAccount:
 ## Exposed telegraf configuration
 ## For full list of possible values see `/docs/all-config-values.yaml` and `/docs/all-config-values.toml`
 ## ref: https://docs.influxdata.com/telegraf/v1.1/administration/configuration/
-config:
-  agent:
-    interval: "10s"
-    round_interval: true
-    metric_batch_size: 1000
-    metric_buffer_limit: 10000
-    collection_jitter: "0s"
-    flush_interval: "10s"
-    flush_jitter: "0s"
-    precision: ""
-    debug: false
-    quiet: false
-    logfile: ""
-    hostname: "$HOSTNAME"
-    omit_hostname: false
-  processors:
-    - enum:
-        mapping:
-          field: "status"
-          dest: "status_code"
-          value_mappings:
-            healthy: 1
-            problem: 2
-            critical: 3
-  outputs:
-    - influxdb:
-        urls:
-          - "http://influxdb.monitoring.svc:8086"
-        database: "telegraf"
-  inputs:
-    - statsd:
-        service_address: ":8125"
-        percentiles:
-          - 50
-          - 95
-          - 99
-        metric_separator: "_"
-        allowed_pending_messages: 10000
-        percentile_limit: 1000
+#config:
+# agent:
 
-metrics:
-  health:
-    enabled: false
-    service_address: "http://:8888"
-    threshold: 5000.0
-  internal:
-    enabled: true
-    collect_memstats: false
+# outputs:
+
+# inputs:
 
 # Lifecycle hooks
 # hooks:
